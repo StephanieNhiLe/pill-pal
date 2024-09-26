@@ -1,3 +1,10 @@
 Flask==2.3.3
 flask-cors==4.0.0
 python-dotenv
+fastapi[standard]
+pinecone
+langchain
+langchain-openai
+langchain-pinecone
+openai
+pinecone-client
