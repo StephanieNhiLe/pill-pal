@@ -3,8 +3,12 @@ flask-cors==4.0.0
 python-dotenv
 fastapi[standard]
 pinecone
+pinecone-client
 langchain
 langchain-openai
 langchain-pinecone
 openai
 pinecone-client
+pydantic
+llama-index
+ 
