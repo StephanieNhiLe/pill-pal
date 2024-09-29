@@ -3,6 +3,7 @@ from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from services.PineconeVectorDB import PineconeVectorDB
 from services.PrescriptionProcessing import PrescriptionUploader
+from services.PineconeQA import PineconeQA
 import os 
 
 app = FastAPI()
@@ -21,12 +22,16 @@ if not pinecone_db.check_index_exists():
 
 # Get the vector store
 uploader = PrescriptionUploader(pinecone_db)
+qa = PineconeQA(pinecone_db, OPENAI_API_KEY)
 
 class Prescription(BaseModel):
     patient_name: str
     doctor_name: str
     date: str
     notes: Optional[str] = None
+
+class QuestionRequest(BaseModel):
+    question: str
 
 @app.get("/")
 async def root():
@@ -62,5 +67,23 @@ async def add_prescription(file: UploadFile = File(...)):
             os.remove(file_path)
 
 # TODO: Add a route to get info about prescription drugs
+
+# TODO: add a route to ask questions about prescription drugs
+@app.post("/ask-question")
+async def ask_question(request: QuestionRequest):
+    try:
+        response = qa.ask_question(request.question)
+        return {"response": response}
+    except Exception as e:
+        print(f"Error while processing question: {str(e)}")
+        return {"message": "Error Processing Question"}, 400
+
 # TODO: Add a route to get info about over-the-counter drugs
 # TODO: Add a route to get info about how to take a prescription drug
+
+
+# For testing purposes only
+@app.post("/delete-prescriptions")
+async def delete_prescriptions():
+    uploader.delete_all_prescriptions()
+    return {"message": "All Prescriptions Deleted"}

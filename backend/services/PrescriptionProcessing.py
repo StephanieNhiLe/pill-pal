@@ -36,6 +36,10 @@ class PrescriptionUploader:
 
         self.vector_store.add_documents(chunks)
         return len(chunks)
+
+    def delete_all_prescriptions(self):
+        self.vector_store.delete(delete_all=True)
+        return True
     
     def delete_prescription(self, file_path):
         loader = TextLoader(file_path)
