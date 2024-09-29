@@ -14,6 +14,15 @@ pip install -r requirements.txt
 ```
 export PINECONE_API_KEY=<PINECONE_API_KEY>
 ```
+5. Install tesseract for image processing.
+    - If you use macOS (why?)
+```
+brew install tesseract
+```
+- If you use Linux (why? get some help.)
+```
+sudo apt-get install tesseract-ocr
+```
 4. Start backend
 ```
 fastapi dev app.py

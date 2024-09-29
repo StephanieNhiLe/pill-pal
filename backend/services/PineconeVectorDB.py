@@ -8,7 +8,9 @@ class PineconeVectorDB:
         os.environ['PINECONE_API_KEY'] = pinecone_api_key
         self.pc = Pinecone(api_key=pinecone_api_key)
         self.index_name = index_name
-        self.embeddings = OpenAIEmbeddings(api_key=openai_api_key)
+        self.embeddings = OpenAIEmbeddings(
+                api_key=openai_api_key,
+            )
 
     def create_index(self):
         if self.index_name not in self.pc.list_indexes():

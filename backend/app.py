@@ -3,6 +3,7 @@ from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from services.PineconeVectorDB import PineconeVectorDB
 from services.PrescriptionProcessing import PrescriptionUploader
+import os 
 
 app = FastAPI()
 
@@ -32,17 +33,34 @@ async def root():
     return {"message": "Hello World"}
 
 @app.post("/add-prescription")
-async def add_prescription(prescription: Prescription, file: UploadFile = File(...)):
+async def add_prescription(file: UploadFile = File(...)):
     try:
+        # Save the uploaded file temporarily
         file_path = f"temp_{file.filename}"
         with open(file_path, "wb") as buffer:
             content = await file.read()
             buffer.write(content)
-        
+
+        # Check if the file was saved correctly
+        if not os.path.exists(file_path):
+            raise ValueError(f"File {file_path} could not be saved.")
+
+        # Try to upload the prescription and process the file
         chunks = uploader.upload_prescription(file_path)
         return {
             "message": "Prescription Uploaded Successfully",
             "chunks": chunks
         }, 201
-    except:
+    
+    except Exception as e:
+        print(f"Error while processing file: {str(e)}")
         return {"message": "Error Processing File"}, 400
+    
+    finally:
+        # Clean up the temporary file
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+# TODO: Add a route to get info about prescription drugs
+# TODO: Add a route to get info about over-the-counter drugs
+# TODO: Add a route to get info about how to take a prescription drug
