@@ -9,8 +9,12 @@ cd backend
 ```
 pip install -r requirements.txt
 ```
-3. Rename .env.temp to .env and replace the Deepgram API key
-4. start flask server (I usuall run this command for that):
+3. on terminal run the following command to save pinecone api key into env
+    - I've also added os code to add it while run time, haven't tested it out.
 ```
-python -m flask run --debug
+export PINECONE_API_KEY=<PINECONE_API_KEY>
+```
+4. Start backend
+```
+fastapi dev app.py
 ```
