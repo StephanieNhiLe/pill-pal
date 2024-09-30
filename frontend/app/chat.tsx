@@ -6,13 +6,13 @@ import { useRouter } from 'expo-router';
 
 const ChatScreen = () => {
   const router = useRouter();
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]); // State to keep track of messages
-  const [image, setImage] = useState(null); // State to keep track of selected image
-  const [isLoading, setIsLoading] = useState(false); // Simulate AI response loading
+  const [message, setMessage] = useState(''); // State for the input message
+  const [messages, setMessages] = useState([]); // State for message history
+  const [image, setImage] = useState(null); // State for the selected image
+  const [isLoading, setIsLoading] = useState(false); // State to simulate AI response
 
   useEffect(() => {
-    // Request permission to access camera and media library
+    // Request permissions for accessing the camera and media library
     const requestPermissions = async () => {
       const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
       const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -27,12 +27,17 @@ const ChatScreen = () => {
   // Function to handle sending a message
   const handleSendMessage = () => {
     if (message.trim() || image) {
-      // Update the messages array with the new message or image
+      // Create a new user message object
       const newMessage = { text: message, image: image, sender: 'user' };
+
+      // Update the messages array with the new user message
       setMessages([...messages, newMessage]);
-      setMessage(''); // Clear the input field after sending
-      setImage(null); // Clear selected image
+
+      // Simulate an AI response with the user's message
       simulateAiResponse(newMessage);
+
+      // Clear the selected image but keep the message in the input field
+      setImage(null);
     }
   };
 
@@ -40,12 +45,13 @@ const ChatScreen = () => {
   const simulateAiResponse = (userMessage) => {
     setIsLoading(true);
     setTimeout(() => {
+      // Create an AI response based on the user message
       const aiResponse = {
         text: userMessage.image ? "What pill is this?" : `AI Response to: ${userMessage.text}`,
         image: userMessage.image ? userMessage.image : null,
         sender: 'AI',
       };
-      setMessages([...messages, aiResponse]);
+      setMessages([...messages, userMessage, aiResponse]);
       setIsLoading(false);
     }, 2000); // Simulate a 2-second delay for the AI response
   };
@@ -95,7 +101,7 @@ const ChatScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Content ScrollView */}
+      {/* Scrollable Content */}
       <ScrollView style={styles.content}>
         {messages.map((item, index) => (
           <View
