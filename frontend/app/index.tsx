@@ -37,7 +37,7 @@ const WelcomeScreen = () => {
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         {/* Home Icon */}
-        <TouchableOpacity onPress={() => setSelected('home')} style={styles.navIcon}>
+        <TouchableOpacity onPress={() => router.push('/') } style={styles.navIcon}>
           <Ionicons
             name="home"
             size={30}
@@ -46,13 +46,13 @@ const WelcomeScreen = () => {
         </TouchableOpacity>
 
         {/* Explore Icon */}
-        <TouchableOpacity onPress={() => setSelected('search')} style={styles.navIcon}>
+        {/* <TouchableOpacity onPress={() => setSelected('search')} style={styles.navIcon}>
           <Ionicons
             name="search"
             size={30}
             color={selected === 'search' ? '#1241C4' : '#D0D0D0'}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Notifications Icon */}
         <TouchableOpacity onPress={() => setSelected('notifications')} style={styles.navIcon}>
@@ -64,7 +64,7 @@ const WelcomeScreen = () => {
         </TouchableOpacity>
 
         {/* Profile Icon */}
-        <TouchableOpacity onPress={() => setSelected('profile')} style={styles.navIcon}>
+        <TouchableOpacity onPress={() => router.push('/profile')} style={styles.navIcon}>
           <Ionicons
             name="person"
             size={30}
