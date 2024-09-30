@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Form
 from pydantic import BaseModel
 from services.PineconeVectorDB import PineconeVectorDB
 from services.PrescriptionProcessing import PrescriptionUploader
@@ -32,6 +32,7 @@ class Prescription(BaseModel):
 
 class QuestionRequest(BaseModel):
     question: str
+    photo: Optional[UploadFile] = None
 
 @app.get("/")
 async def root():
@@ -70,9 +71,21 @@ async def add_prescription(file: UploadFile = File(...)):
 
 # TODO: add a route to ask questions about prescription drugs
 @app.post("/ask-question")
-async def ask_question(request: QuestionRequest):
+async def ask_question(
+    question: str = Form(...),
+    photo: UploadFile = File(None)
+):
     try:
-        response = qa.ask_question(request.question)
+        if photo:
+            medication_path = f"temp_{photo.filename}"
+            with open(medication_path, "wb") as buffer:
+                content = await photo.read()
+                buffer.write(content)
+            response = qa.ask_question_with_med_photo(question, medication_path)
+            os.remove(medication_path)
+        else:
+            response = qa.ask_question(question)
+        
         return {"response": response}
     except Exception as e:
         print(f"Error while processing question: {str(e)}")
