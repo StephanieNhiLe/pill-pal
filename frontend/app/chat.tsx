@@ -191,19 +191,15 @@ const ChatScreen = () => {
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color="#333" />
         </TouchableOpacity>
-
+  
         <Text style={styles.title}>PillPal.ai</Text>
-
+  
         {/* "Add Prescription" Button */}
         <TouchableOpacity style={styles.addPrescriptionButton} onPress={handleAddPrescription}>
           <Text style={styles.addPrescriptionText}>Add Prescription</Text>
         </TouchableOpacity>
-
-        {/* <TouchableOpacity style={styles.menuButton}>
-          <Ionicons name="ellipsis-horizontal" size={24} color="#333" />
-        </TouchableOpacity> */}
       </View>
-
+  
       {/* Display Description Boxes Before First Message */}
       {!hasUserSentMessage ? (
         <ScrollView contentContainerStyle={styles.introContainer}>
@@ -215,28 +211,29 @@ const ChatScreen = () => {
           <Text style={styles.introText}>Each result includes a pill’s picture, its brand and generic names, strength, and other info.</Text>
         </ScrollView>
       ) : (
-      {/* Scrollable Content */}
-      <ScrollView style={styles.content}>
-
-        {messages.map((item, index) => (
-          <View 
-            key={index} 
-            style={[
-              styles.messageContainer, 
-              item.sender === 'user' ? styles.userMessage : styles.aiMessage,
-            ]}
-          >
-            {item.text ? (
-              <Markdown style={markdownStyles}>
-                {item.text}
-              </Markdown>
-            ) : null}
-            {item.image ? (
-              <Image source={{ uri: item.image }} style={styles.messageImage} />
-            ) : null}
-          </View>
-        ))}
-
+        <ScrollView style={styles.content}>
+          {messages.map((item, index) => (
+            <View
+              key={index}
+              style={[
+                styles.messageContainer,
+                item.sender === 'user' ? styles.userMessage : styles.aiMessage,
+              ]}
+            >
+              {/* Render Markdown text if available */}
+              {item.text ? (
+                <Text style={styles.messageText}>
+                  {item.text}
+                </Text>
+              ) : null}
+  
+              {/* Render Image if available */}
+              {item.image ? (
+                <Image source={{ uri: item.image }} style={styles.messageImage} />
+              ) : null}
+            </View>
+          ))}
+  
           {isLoading && (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color="#1241C4" />
@@ -245,19 +242,19 @@ const ChatScreen = () => {
           )}
         </ScrollView>
       )}
-
+  
       {/* Floating Input Section */}
       <View style={styles.inputContainer}>
         {/* Camera Button */}
         <TouchableOpacity style={styles.iconButton} onPress={pickImageFromCamera}>
           <Ionicons name="camera" size={24} color="#1241C4" />
         </TouchableOpacity>
-
+  
         {/* Gallery Button */}
         <TouchableOpacity style={styles.iconButton} onPress={pickImageFromGallery}>
           <Ionicons name="image" size={24} color="#1241C4" />
         </TouchableOpacity>
-
+  
         {/* Text Input */}
         <TextInput
           style={styles.input}
@@ -265,7 +262,7 @@ const ChatScreen = () => {
           value={message}
           onChangeText={setMessage}
         />
-
+  
         {/* Send Button */}
         <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
           <Ionicons name="send" size={24} color="#FFFFFF" />
@@ -273,6 +270,7 @@ const ChatScreen = () => {
       </View>
     </KeyboardAvoidingView>
   );
+  
 };
 
 const styles = StyleSheet.create({
