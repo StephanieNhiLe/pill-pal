@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import the correct Ionicons
 
 const WelcomeScreen = () => {
   const router = useRouter();
+  const navigation = useNavigation();
+  const [selected, setSelected] = useState('home'); // Track the selected icon
+
+  // Hide the header for this screen
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerShown: false });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
       {/* Logo */}
       <View style={styles.logoContainer}>
-        <Image source={require('../assets/images/PillPal.png')} style={styles.logo} />
+        <Image source={require('../assets/images/PillPal2.png')} style={styles.logo} />
       </View>
 
       {/* Title */}
-      <Text style={styles.appName}>Welcome to</Text>
+      <Text style={styles.title}>Welcome to</Text>
       <Text style={styles.appName}>PillPal</Text>
 
       {/* Description */}
@@ -28,10 +36,41 @@ const WelcomeScreen = () => {
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        <View style={styles.navIcon}></View>
-        <View style={styles.navIcon}></View>
-        <View style={styles.navIcon}></View>
-        <View style={styles.navIcon}></View>
+        {/* Home Icon */}
+        <TouchableOpacity onPress={() => setSelected('home')} style={styles.navIcon}>
+          <Ionicons
+            name="home"
+            size={30}
+            color={selected === 'home' ? '#1241C4' : '#D0D0D0'}
+          />
+        </TouchableOpacity>
+
+        {/* Explore Icon */}
+        <TouchableOpacity onPress={() => setSelected('search')} style={styles.navIcon}>
+          <Ionicons
+            name="search"
+            size={30}
+            color={selected === 'search' ? '#1241C4' : '#D0D0D0'}
+          />
+        </TouchableOpacity>
+
+        {/* Notifications Icon */}
+        <TouchableOpacity onPress={() => setSelected('notifications')} style={styles.navIcon}>
+          <Ionicons
+            name="notifications"
+            size={30}
+            color={selected === 'notifications' ? '#1241C4' : '#D0D0D0'}
+          />
+        </TouchableOpacity>
+
+        {/* Profile Icon */}
+        <TouchableOpacity onPress={() => setSelected('profile')} style={styles.navIcon}>
+          <Ionicons
+            name="person"
+            size={30}
+            color={selected === 'profile' ? '#1241C4' : '#D0D0D0'}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -43,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 120,
+    paddingTop: 180,
   },
   logoContainer: {
     marginTop: 20,
@@ -55,36 +94,36 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    marginTop: 40,
-    fontSize: 26,  // Increased font size
-    fontWeight: '400',
-    color: '#333333',
-  },
-  appName: {
-    fontSize: 38,  // Increased font size for the app name
+    fontSize: 38,
     fontWeight: 'bold',
     color: '#000000',
     marginTop: 10,
   },
+  appName: {
+    fontSize: 45,
+    fontWeight: 'bold',
+    color: '#1241C4',
+    marginTop: 5,
+  },
   description: {
     textAlign: 'center',
-    fontSize: 18,  // Slightly increased font size for readability
-    lineHeight: 24,  // Improved line height for better text spacing
+    fontSize: 18,
+    lineHeight: 24,
     color: '#7C7C7C',
-    marginHorizontal: 50,  // Reduced horizontal margin to make text tighter
-    marginTop: 20,
+    marginHorizontal: 20,
+    marginTop: 30,
   },
   button: {
-    marginTop: 40,
-    backgroundColor: '#000000',
-    borderRadius: 30,  // More rounded corners for the button
-    paddingVertical: 18,  // Increased vertical padding
-    paddingHorizontal: 60,  // Increased horizontal padding for a larger button
+    marginTop: 60,
+    backgroundColor: '#1241C4',
+    borderRadius: 15,
+    paddingVertical: 18,
+    paddingHorizontal: 80,
     alignItems: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 18,  // Slightly increased button text size
+    fontSize: 18,
     fontWeight: '600',
   },
   bottomNav: {
@@ -93,16 +132,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-around',
-    paddingVertical: 25,  // Increased padding for a taller navbar
+    paddingVertical: 10,
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',  // Added border to separate navbar from the screen
+    borderTopColor: '#E0E0E0',
   },
   navIcon: {
-    width: 30,  // Increased icon size
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#D0D0D0',
+    padding: 15, // Added padding to the icons for better spacing
   },
 });
 
