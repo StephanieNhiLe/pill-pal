@@ -1,114 +1,143 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { Ionicons, MaterialIcons, FontAwesome5 } from 'react-native-vector-icons';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, Linking, Alert } from 'react-native';
+import { Ionicons } from 'react-native-vector-icons';
 import { useRouter, useNavigation } from 'expo-router';
-import { ProgressBar } from 'react-native-paper'; // You need to install 'react-native-paper' for the progress bar
+
+import Profile from '../assets/images/profile.png';
 
 const ProfileScreen = () => {
-    const router = useRouter();
-    const navigation = useNavigation();
-    const [selected, setSelected] = useState('home'); // Track the selected icon
-  
-    React.useEffect(() => {
-      // Hide the header when this screen is focused
-      navigation.setOptions({ headerShown: false });
-    }, [navigation]);
+  const router = useRouter();
+  const navigation = useNavigation();
+  const [selected, setSelected] = useState('home'); // Track the selected icon
+
+  // State to manage profile details
+  const [age, setAge] = useState('28');
+  const [weight, setWeight] = useState('70 kg');
+  const [height, setHeight] = useState('175 cm');
+  const [emergencyContact, setEmergencyContact] = useState('+1 234 567 8901');
+  const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
+
+  React.useEffect(() => {
+    // Hide the header when this screen is focused
+    navigation.setOptions({ headerShown: false });
+  }, [navigation]);
+
+  // Function to handle phone call linking
+  const handleCall = (phoneNumber) => {
+    Linking.openURL(`tel:${phoneNumber}`).catch((err) =>
+      Alert.alert('Error', 'Unable to place call. Please check your phone settings.')
+    );
+  };
+
+  // Toggle between edit and view mode
+  const toggleEditMode = () => {
+    setIsEditing(!isEditing);
+  };
 
   return (
     <View style={styles.container}>
-        <ScrollView style={styles.scrollcontent}>
+      {/* Scrollable Content */}
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Top Navigation */}
         <View style={styles.topNavigation}>
-            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color="#333" />
-            </TouchableOpacity>
-            {/* <Text style={styles.title}>Profile</Text> */}
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+            <Ionicons name={isEditing ? "checkmark-done" : "create-outline"} size={24} color="#1241C4" />
+          </TouchableOpacity>
         </View>
 
         {/* Profile Section */}
         <View style={styles.profileSection}>
-            <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.profileImage} />
-            <Text style={styles.profileName}>Caleb Hillson</Text>
-            <Text style={styles.profileEmail}>calebhill@gmail.com</Text>
+          <Image source={Profile} style={styles.profileImage} />
+          <Text style={styles.profileName}>Caleb Hillson</Text>
+          <Text style={styles.profileEmail}>calebhill@gmail.com</Text>
         </View>
 
-        {/* Preferences */}
-        <TouchableOpacity style={styles.optionContainer}>
-            <View style={styles.option}>
-            <Ionicons name="settings-outline" size={24} color="#1241C4" />
-            <Text style={styles.optionText}>Preferences</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color="#333" />
+        {/* Editable Fields */}
+        <View style={styles.infoContainer}>
+          {/* Age Field */}
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Age</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.input}
+                value={age}
+                onChangeText={(text) => setAge(text)}
+                keyboardType="numeric"
+              />
+            ) : (
+              <Text style={styles.infoValue}>{age}</Text>
+            )}
+          </View>
+
+          {/* Weight Field */}
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Weight</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.input}
+                value={weight}
+                onChangeText={(text) => setWeight(text)}
+                keyboardType="numeric"
+              />
+            ) : (
+              <Text style={styles.infoValue}>{weight}</Text>
+            )}
+          </View>
+
+          {/* Height Field */}
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Height</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.input}
+                value={height}
+                onChangeText={(text) => setHeight(text)}
+                keyboardType="numeric"
+              />
+            ) : (
+              <Text style={styles.infoValue}>{height}</Text>
+            )}
+          </View>
+
+          {/* Emergency Contact Field */}
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Emergency Contact</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.input}
+                value={emergencyContact}
+                onChangeText={(text) => setEmergencyContact(text)}
+                keyboardType="phone-pad"
+              />
+            ) : (
+              <TouchableOpacity onPress={() => handleCall(emergencyContact)}>
+                <Text style={[styles.infoValue, styles.linkText]}>{emergencyContact}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Fixed Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        {/* Home Icon */}
+        <TouchableOpacity onPress={() => { router.push('/'); setSelected('home'); }} style={styles.navIcon}>
+          <Ionicons name="home" size={30} color={selected === 'home' ? '#1241C4' : '#D0D0D0'} />
         </TouchableOpacity>
 
-        {/* Account Security */}
-        <TouchableOpacity style={styles.optionContainer}>
-            <View style={styles.option}>
-            <Ionicons name="lock-closed-outline" size={24} color="#1241C4" />
-            <View style={styles.securitySection}>
-                <Text style={styles.optionText}>Account Security</Text>
-                <ProgressBar progress={0.8} color="#1241C4" style={styles.progressBar} />
-                <Text style={styles.securityStatus}>Excellent</Text>
-            </View>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color="#333" />
+        {/* Notifications Icon */}
+        <TouchableOpacity onPress={() => setSelected('notifications')} style={styles.navIcon}>
+          <Ionicons name="notifications" size={30} color={selected === 'notifications' ? '#1241C4' : '#D0D0D0'} />
         </TouchableOpacity>
 
-        {/* Customer Support */}
-        <TouchableOpacity style={styles.optionContainer}>
-            <View style={styles.option}>
-            <Ionicons name="help-circle-outline" size={24} color="#1241C4" />
-            <Text style={styles.optionText}>Customer Support</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color="#333" />
+        {/* Profile Icon */}
+        <TouchableOpacity onPress={() => { router.push('/profile'); setSelected('profile'); }} style={styles.navIcon}>
+          <Ionicons name="person" size={30} color={selected === 'profile' ? '#1241C4' : '#D0D0D0'} />
         </TouchableOpacity>
-
-        {/* Logout */}
-        <TouchableOpacity style={styles.optionContainer}>
-            <View style={styles.option}>
-            <Ionicons name="log-out-outline" size={24} color="#1241C4" />
-            <Text style={styles.optionText}>Logout</Text>
-            </View>
-        </TouchableOpacity>
-        </ScrollView>
-        {/* Bottom Navigation */}
-        {/* <View style={styles.bottomNav}> */}
-            {/* Home Icon */}
-            {/* <TouchableOpacity onPress={() => router.push('/') } style={styles.navIcon}>
-            <Ionicons
-                name="home"
-                size={30}
-                color={selected === 'home' ? '#1241C4' : '#D0D0D0'}
-            />
-            </TouchableOpacity> */}
-
-            {/* Explore Icon */}
-            {/* <TouchableOpacity onPress={() => setSelected('search')} style={styles.navIcon}>
-            <Ionicons
-                name="search"
-                size={30}
-                color={selected === 'search' ? '#1241C4' : '#D0D0D0'}
-            />
-            </TouchableOpacity> */}
-
-            {/* Notifications Icon */}
-            {/* <TouchableOpacity onPress={() => setSelected('notifications')} style={styles.navIcon}>
-            <Ionicons
-                name="notifications"
-                size={30}
-                color={selected === 'notifications' ? '#1241C4' : '#D0D0D0'}
-            />
-            </TouchableOpacity> */}
-
-            {/* Profile Icon */}
-            {/* <TouchableOpacity onPress={() => router.push('/profile')} style={styles.navIcon}>
-            <Ionicons
-                name="person"
-                size={30}
-                color={selected === 'profile' ? '#1241C4' : '#D0D0D0'}
-            />
-            </TouchableOpacity> */}
-        {/* </View> */}
+      </View>
     </View>
   );
 };
@@ -117,8 +146,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    marginTop: 50,
   },
-  scrollcontent: {
+  scrollContent: {
     paddingHorizontal: 20,
     paddingBottom: 100, // Add bottom padding to avoid overlapping with bottom nav
   },
@@ -131,11 +161,8 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    alignSelf: 'center',
+  editButton: {
+    padding: 8,
   },
   profileSection: {
     alignItems: 'center',
@@ -156,49 +183,58 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#7C7C7C',
   },
-  optionContainer: {
+  infoContainer: {
+    paddingHorizontal: 10,
+    marginTop: 20,
+  },
+  infoItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  optionText: {
+  infoLabel: {
     fontSize: 18,
-    color: '#333',
-    marginLeft: 15,
+    color: '#000000',
   },
-  securitySection: {
-    flexDirection: 'column',
+  infoValue: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1241C4',
   },
-  progressBar: {
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    fontSize: 18,
+    padding: 5,
     width: 150,
-    height: 6,
-    borderRadius: 5,
-    marginVertical: 5,
+    color: '#333',
   },
-  securityStatus: {
-    fontSize: 14,
-    color: '#7C7C7C',
+  linkText: {
+    color: '#1E90FF',
+    textDecorationLine: 'underline',
   },
   bottomNav: {
-    position: 'absolute',
-    bottom: 0,
     flexDirection: 'row',
-    width: '100%',
     justifyContent: 'space-around',
-    paddingVertical: 5,
+    alignItems: 'center',
+    paddingVertical: 10,
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    elevation: 10, // Add elevation for Android shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
   },
   navIcon: {
-    padding: 15, // Added padding to the icons for better spacing
+    padding: 10, // Adjust padding for better spacing around icons
   },
 });
 
