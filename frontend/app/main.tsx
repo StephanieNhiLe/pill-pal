@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ChatScreen from './chat';
 import TrackerScreen from './tracker';
 import ProfileScreen from './profile';
+import AddMedLogForm from './AddMedLogForm';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,6 +49,11 @@ const MainTabNavigator = () => {
       <Tab.Screen 
         name="Profile" 
         component={ProfileScreen} 
+        options={{ headerShown: false }}  
+      />
+      <Tab.Screen 
+        name="Med Log" 
+        component={AddMedLogForm} 
         options={{ headerShown: false }}  
       />
     </Tab.Navigator>
