@@ -30,7 +30,7 @@ const WelcomeScreen = () => {
       </Text>
 
       {/* Get Started Button */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/chat')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/main')}>
         <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
 
