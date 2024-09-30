@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     position: 'absolute',
-    bottom: 20, // Make the input bar float above the bottom
+    bottom: 30, // Make the input bar float above the bottom
     left: 10,
     right: 10,
     flexDirection: 'row',
