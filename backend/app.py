@@ -28,6 +28,7 @@ if not pinecone_db.check_index_exists():
 uploader = PrescriptionUploader(pinecone_db)
 qa = PineconeQA(pinecone_db, OPENAI_API_KEY)
 
+
 class Prescription(BaseModel):
     patient_name: str
     doctor_name: str
@@ -104,3 +105,4 @@ async def ask_question(
 async def delete_prescriptions():
     uploader.delete_all_prescriptions()
     return {"message": "All Prescriptions Deleted"}
+

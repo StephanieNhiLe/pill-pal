@@ -48,3 +48,4 @@ class PrescriptionUploader:
         chunks = text_splitter.split_documents(documents)
         self.vector_store.delete(chunks)
         return len(chunks)
+
