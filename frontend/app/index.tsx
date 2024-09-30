@@ -22,11 +22,11 @@ const WelcomeScreen = () => {
 
       {/* Title */}
       <Text style={styles.title}>Welcome to</Text>
-      <Text style={styles.appName}>PillPal</Text>
+      <Text style={styles.appName}>PillPal.ai</Text>
 
       {/* Description */}
       <Text style={styles.description}>
-        Start chatting with PillPal now.{"\n"}Ask me anything about your medication.
+        Start chatting with PillPal.ai now.{"\n"}Ask me anything about your medication.
       </Text>
 
       {/* Get Started Button */}

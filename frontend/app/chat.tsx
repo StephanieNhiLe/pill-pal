@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image, FlatList, 
+  ActivityIndicator, ActionSheetIOS, Alert} from 'react-native';
 import { Ionicons } from 'react-native-vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
@@ -88,6 +89,47 @@ const ChatScreen = () => {
     }
   };
 
+  // Function to handle showing options for adding a prescription
+  const handleAddPrescription = () => {
+    if (Platform.OS === 'ios') {
+      // iOS Action Sheet
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Cancel', 'Take Photo', 'Choose from Gallery'],
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 1) {
+            pickImageFromCamera(); // Take Photo option
+          } else if (buttonIndex === 2) {
+            pickImageFromGallery(); // Choose from Gallery option
+          }
+        }
+      );
+    } else {
+      // Android / Web Alert Dialog as a simple implementation
+      Alert.alert(
+        'Add Prescription',
+        'Choose an option',
+        [
+          {
+            text: 'Take Photo',
+            onPress: pickImageFromCamera,
+          },
+          {
+            text: 'Choose from Gallery',
+            onPress: pickImageFromGallery,
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -100,10 +142,10 @@ const ChatScreen = () => {
           <Ionicons name="chevron-back" size={24} color="#333" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>PillPal</Text>
+        <Text style={styles.title}>PillPal.ai</Text>
 
         {/* "Add Prescription" Button */}
-        <TouchableOpacity style={styles.addPrescriptionButton} onPress={() => alert('Add Prescription Pressed!')}>
+        <TouchableOpacity style={styles.addPrescriptionButton} onPress={handleAddPrescription}>
           <Text style={styles.addPrescriptionText}>Add Prescription</Text>
         </TouchableOpacity>
 
@@ -116,9 +158,9 @@ const ChatScreen = () => {
       {!hasUserSentMessage ? (
         <ScrollView contentContainerStyle={styles.introContainer}>
           <Image source={require('../assets/images/PillPal2.png')} style={styles.logo}></Image>
-          <Text style={styles.introText}>PillPal helps you put a name to an unknown medication.</Text>
+          <Text style={styles.introText}>PillPal.ai helps you put a name to an unknown medication.</Text>
           <Text style={styles.introText}>It identifies prescription or OTC meds you take in solid form by mouth, like tablets or capsules.</Text>
-          <Text style={styles.introText}>Simply take a photo of the pill, and PillPal tells you what it might be.</Text>
+          <Text style={styles.introText}>Simply take a photo of the pill, and PillPal.ai tells you what it might be.</Text>
           <Text style={styles.introText}>It shows you a list of close matches, or it singles out an exact possible match.</Text>
           <Text style={styles.introText}>Each result includes a pill’s picture, its brand and generic names, strength, and other info.</Text>
         </ScrollView>
