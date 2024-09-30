@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 180,
+    paddingTop: 200,
   },
   logoContainer: {
     marginTop: 20,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-around',
-    paddingVertical: 10,
+    paddingVertical: 5,
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
