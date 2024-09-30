@@ -33,9 +33,9 @@ class PrescriptionUploader:
         for chunk in chunks:
             chunk.metadata['source'] = file_path
             chunk.metadata['file_type'] = file_extension
-
+        
         self.vector_store.add_documents(chunks)
-        return len(chunks)
+        return chunks
 
     def delete_all_prescriptions(self):
         self.vector_store.delete(delete_all=True)
