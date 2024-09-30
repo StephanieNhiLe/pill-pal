@@ -127,7 +127,7 @@ const ChatScreen = () => {
         )}
       </ScrollView>
 
-      {/* Input Section */}
+      {/* Floating Input Section */}
       <View style={styles.inputContainer}>
         {/* Camera Button */}
         <TouchableOpacity style={styles.iconButton} onPress={pickImageFromCamera}>
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 16,
+    marginBottom: 80, // Add margin to prevent overlap with floating bar
   },
   messageContainer: {
     marginVertical: 10,
@@ -227,13 +228,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   inputContainer: {
+    position: 'absolute',
+    bottom: 20, // Make the input bar float above the bottom
+    left: 10,
+    right: 10,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderRadius: 25, // More rounded corners for floating effect
     backgroundColor: '#FFFFFF',
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5, // Add elevation for Android shadow effect
   },
   iconButton: {
     padding: 10,
