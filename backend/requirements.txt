@@ -3,8 +3,13 @@ flask-cors==4.0.0
 python-dotenv
 fastapi[standard]
 pinecone
+pinecone-client
 langchain
 langchain-openai
 langchain-pinecone
+langchain-community
 openai
 pinecone-client
+pypdf
+unstructured[all-docs]
+

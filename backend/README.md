@@ -9,8 +9,21 @@ cd backend
 ```
 pip install -r requirements.txt
 ```
-3. Rename .env.temp to .env and replace the Deepgram API key
-4. start flask server (I usuall run this command for that):
+3. on terminal run the following command to save pinecone api key into env
+    - I've also added os code to add it while run time, haven't tested it out.
 ```
-python -m flask run --debug
+export PINECONE_API_KEY=<PINECONE_API_KEY>
+```
+5. Install tesseract for image processing.
+    - If you use macOS (why?)
+```
+brew install tesseract
+```
+- If you use Linux (why? get some help.)
+```
+sudo apt-get install tesseract-ocr
+```
+4. Start backend
+```
+fastapi dev app.py
 ```

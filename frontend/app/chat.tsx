@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Keyboa
 import { Ionicons } from 'react-native-vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
+import Markdown from 'react-native-markdown-display';
 
 const ChatScreen = () => {
   const router = useRouter();
@@ -27,24 +28,73 @@ const ChatScreen = () => {
   }, []);
 
   // Function to handle sending a message
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (message.trim() || image) {
       setHasUserSentMessage(true); // Mark that the user has sent their first message
 
       // Create a new user message object
       const newMessage = { text: message, image: image, sender: 'user' };
-
+  
       // Update the messages array with the new user message
-      setMessages([...messages, newMessage]);
+//       setMessages([...messages, newMessage]);
 
-      // Clear the input message and image
-      setMessage(''); // Reset the text input to empty
+//       // Clear the input message and image
+//       setMessage(''); // Reset the text input to empty
+//       setImage(null);
+
+//       // Simulate an AI response with the user's message
+//       simulateAiResponse(newMessage);
+      
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+  
+      let formData = new FormData();
+      formData.append('question', message);
+      if (image) {
+        const imageUri = image;
+        const filename = imageUri.split('/').pop();
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image`;
+        formData.append('photo', {
+          uri: imageUri,
+          name: filename,
+          type,
+        });
+      }
+  
+      try {
+        setIsLoading(true);
+        console.log('Sending message:', formData);
+        const response = await fetch('http://192.168.50.143:8000/ask-question', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Accept: 'application/json',
+            // Remove 'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        const aiMessage = { text: data.response, sender: 'AI' };
+        
+        // Update messages state, keeping previous messages including the user's message
+        setMessages(prevMessages => [...prevMessages, aiMessage]);
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error sending the message:', error);
+        setIsLoading(false);
+      }
+  
+      // Clear the message input and image
+      setMessage('');
       setImage(null);
-
-      // Simulate an AI response with the user's message
-      simulateAiResponse(newMessage);
     }
-  };
+  };  
 
   // Function to simulate an AI response
   const simulateAiResponse = (userMessage) => {
@@ -65,8 +115,8 @@ const ChatScreen = () => {
   const pickImageFromCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+      // allowsEditing: true,
+      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -79,8 +129,8 @@ const ChatScreen = () => {
   const pickImageFromGallery = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+      // allowsEditing: true,
+      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -165,22 +215,27 @@ const ChatScreen = () => {
           <Text style={styles.introText}>Each result includes a pill’s picture, its brand and generic names, strength, and other info.</Text>
         </ScrollView>
       ) : (
-        <ScrollView style={styles.content}>
-          {messages.map((item, index) => (
-            <View
-              key={index}
-              style={[
-                styles.messageContainer,
-                item.sender === 'user' ? styles.userMessage : styles.aiMessage,
-              ]}
-            >
-              {/* Render text message */}
-              {item.text ? <Text style={styles.messageText}>{item.text}</Text> : null}
+      {/* Scrollable Content */}
+      <ScrollView style={styles.content}>
 
-              {/* Render image message */}
-              {item.image ? <Image source={{ uri: item.image }} style={styles.messageImage} /> : null}
-            </View>
-          ))}
+        {messages.map((item, index) => (
+          <View 
+            key={index} 
+            style={[
+              styles.messageContainer, 
+              item.sender === 'user' ? styles.userMessage : styles.aiMessage,
+            ]}
+          >
+            {item.text ? (
+              <Markdown style={markdownStyles}>
+                {item.text}
+              </Markdown>
+            ) : null}
+            {item.image ? (
+              <Image source={{ uri: item.image }} style={styles.messageImage} />
+            ) : null}
+          </View>
+        ))}
 
           {isLoading && (
             <View style={styles.loadingContainer}>
@@ -365,5 +420,35 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+const markdownStyles = {
+  body: {
+    color: '#333',
+  },
+  heading1: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  heading2: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  paragraph: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  list: {
+    marginLeft: 20,
+  },
+  listItem: {
+    marginBottom: 5,
+  },
+  strong: {
+    fontWeight: 'bold',
+  },
+  em: {
+    fontStyle: 'italic',
+  },
+};
 
 export default ChatScreen;
