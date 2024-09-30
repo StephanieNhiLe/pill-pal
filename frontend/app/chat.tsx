@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Keyboa
 import { Ionicons } from 'react-native-vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
+import Markdown from 'react-native-markdown-display';
 
 const ChatScreen = () => {
   const router = useRouter();
@@ -25,21 +26,62 @@ const ChatScreen = () => {
   }, []);
 
   // Function to handle sending a message
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (message.trim() || image) {
       // Create a new user message object
       const newMessage = { text: message, image: image, sender: 'user' };
-
+  
       // Update the messages array with the new user message
-      setMessages([...messages, newMessage]);
-
-      // Simulate an AI response with the user's message
-      simulateAiResponse(newMessage);
-
-      // Clear the selected image but keep the message in the input field
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+  
+      let formData = new FormData();
+      formData.append('question', message);
+      if (image) {
+        const imageUri = image;
+        const filename = imageUri.split('/').pop();
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image`;
+        formData.append('photo', {
+          uri: imageUri,
+          name: filename,
+          type,
+        });
+      }
+  
+      try {
+        setIsLoading(true);
+        console.log('Sending message:', formData);
+        const response = await fetch('http://192.168.50.143:8000/ask-question', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Accept: 'application/json',
+            // Remove 'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        const aiMessage = { text: data.response, sender: 'AI' };
+        
+        // Update messages state, keeping previous messages including the user's message
+        setMessages(prevMessages => [...prevMessages, aiMessage]);
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error sending the message:', error);
+        setIsLoading(false);
+      }
+  
+      // Clear the message input and image
+      setMessage('');
       setImage(null);
     }
-  };
+  };  
 
   // Function to simulate an AI response
   const simulateAiResponse = (userMessage) => {
@@ -60,8 +102,8 @@ const ChatScreen = () => {
   const pickImageFromCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+      // allowsEditing: true,
+      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -74,8 +116,8 @@ const ChatScreen = () => {
   const pickImageFromGallery = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+      // allowsEditing: true,
+      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -103,19 +145,23 @@ const ChatScreen = () => {
 
       {/* Scrollable Content */}
       <ScrollView style={styles.content}>
+
         {messages.map((item, index) => (
-          <View
-            key={index}
+          <View 
+            key={index} 
             style={[
-              styles.messageContainer,
+              styles.messageContainer, 
               item.sender === 'user' ? styles.userMessage : styles.aiMessage,
             ]}
           >
-            {/* Render text message */}
-            {item.text ? <Text style={styles.messageText}>{item.text}</Text> : null}
-
-            {/* Render image message */}
-            {item.image ? <Image source={{ uri: item.image }} style={styles.messageImage} /> : null}
+            {item.text ? (
+              <Markdown style={markdownStyles}>
+                {item.text}
+              </Markdown>
+            ) : null}
+            {item.image ? (
+              <Image source={{ uri: item.image }} style={styles.messageImage} />
+            ) : null}
           </View>
         ))}
 
@@ -256,5 +302,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const markdownStyles = {
+  body: {
+    color: '#333',
+  },
+  heading1: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  heading2: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  paragraph: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  list: {
+    marginLeft: 20,
+  },
+  listItem: {
+    marginBottom: 5,
+  },
+  strong: {
+    fontWeight: 'bold',
+  },
+  em: {
+    fontStyle: 'italic',
+  },
+};
 
 export default ChatScreen;
