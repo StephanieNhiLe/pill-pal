@@ -211,7 +211,7 @@ const ChatScreen = () => {
       {!hasUserSentMessage ? (
         <ScrollView contentContainerStyle={styles.introContainer}>
           <Image source={require('../assets/images/PillPal2.png')} style={styles.logo}></Image>
-          <Text style={styles.introText}>PillPal.ai helps you put a name to an unknown medication.</Text>
+          <Text style={styles.introText}>PillPal AI helps you put a name to an unknown medication.</Text>
           <Text style={styles.introText}>It identifies prescription or OTC meds you take in solid form by mouth, like tablets or capsules.</Text>
           <Text style={styles.introText}>Simply take a photo of the pill, and PillPal.ai tells you what it might be.</Text>
           <Text style={styles.introText}>It shows you a list of close matches, or it singles out an exact possible match.</Text>
@@ -284,7 +284,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
-    marginTop: 50
   },
   topNavigation: {
     flexDirection: 'row',
