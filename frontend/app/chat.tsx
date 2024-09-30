@@ -3,11 +3,18 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Keyboa
   ActivityIndicator, ActionSheetIOS, Alert} from 'react-native';
 import { Ionicons } from 'react-native-vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 import Markdown from 'react-native-markdown-display';
 
 const ChatScreen = () => {
   const router = useRouter();
+  const navigation = useNavigation();
+  
+    React.useEffect(() => {
+      // Hide the header when this screen is focused
+      navigation.setOptions({ headerShown: false });
+    }, [navigation]);
+
   const [message, setMessage] = useState(''); // State for the input message
   const [messages, setMessages] = useState([]); // State for message history
   const [image, setImage] = useState(null); // State for the selected image
@@ -277,6 +284,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
+    marginTop: 50
   },
   topNavigation: {
     flexDirection: 'row',
