@@ -6,10 +6,14 @@ from services.PrescriptionProcessing import PrescriptionUploader
 from services.PineconeQA import PineconeQA
 import os 
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 app = FastAPI()
 
-OPENAI_API_KEY = "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"
-PINECONE_API_KEY = "235a04ec-e6c1-41cb-b830-507a96da48a8"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = "prescription-index"
 
 # Create a PineconeVectorDB instance
