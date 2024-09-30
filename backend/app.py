@@ -58,10 +58,11 @@ async def add_prescription(file: UploadFile = File(...)):
 
         # Try to upload the prescription and process the file
         chunks = uploader.upload_prescription(file_path)
-        return {
-            "message": "Prescription Uploaded Successfully",
-            "chunks": chunks
-        }, 201
+        
+        # Generate medication information from the chunks querying the llm
+        medication_info = qa.get_medication_list(chunks)
+        
+        return {"medication_info": medication_info}, 201
     
     except Exception as e:
         print(f"Error while processing file: {str(e)}")

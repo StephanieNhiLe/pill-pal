@@ -38,6 +38,8 @@ venv.bak/
 venv.bak/
 pip-log.txt
 pip-delete-this-directory.txt
+frontend/node_modules/
+node_modules/
 
 # FastAPI
 *.log
