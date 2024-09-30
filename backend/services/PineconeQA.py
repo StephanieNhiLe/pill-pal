@@ -1,3 +1,4 @@
+import ast
 import base64
 from typing import List, Tuple
 from .PineconeVectorDB import PineconeVectorDB
@@ -5,6 +6,8 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders.image import UnstructuredImageLoader
 from langchain.schema import HumanMessage, AIMessage
+from typing import List, Tuple
+from typing import Dict
 
 class PineconeQA:
     def __init__(self, pinecone_db: PineconeVectorDB, openai_key):
@@ -92,3 +95,50 @@ class PineconeQA:
 
     def clear_chat_history(self):
         self.chat_history = []
+
+    def get_medication_list(self, chunks) -> Dict[str, Dict[str, str]]:
+        medication_message = [
+            HumanMessage(
+                content=[
+                    {
+                        "type": "text", 
+                        "text": "Analyze the following chunks and provide a Python dictionary. The keys should be medication names, and the values should be dictionaries containing 'dosage' and 'time' information if available. If dosage or time is not available, use 'Unknown' as the value. Return ONLY this Python dictionary, without any additional text, code formatting, or explanation."
+                    },
+                    {
+                        "type": "text",
+                        "text": str(chunks)
+                    },
+                ]
+            )
+        ]
+        
+        response = self.llm.invoke(medication_message)
+        print(f"Response from LLM: {response.content}")
+        try:
+            parsed_response = ast.literal_eval(response.content.strip())
+            if not isinstance(parsed_response, dict):
+                raise ValueError("Response is not a valid Python dictionary")
+            
+            # Ensure all medications have 'dosage' and 'time' keys, even if the value is 'Unknown'
+            for med, info in parsed_response.items():
+                if not isinstance(info, dict):
+                    parsed_response[med] = {'dosage': 'Unknown', 'time': 'Unknown'}
+                else:
+                    parsed_response[med]['dosage'] = info.get('dosage', 'Unknown')
+                    parsed_response[med]['time'] = info.get('time', 'Unknown')
+            
+        except Exception as e:
+            print(f"Error parsing medication information: {e}")
+            # If parsing fails, try to extract medication names at least
+            try:
+                medication_names = ast.literal_eval(response.content.strip())
+                if isinstance(medication_names, list):
+                    parsed_response = {med: {'dosage': 'Unknown', 'time': 'Unknown'} for med in medication_names}
+                else:
+                    raise ValueError("Unable to extract medication names")
+            except:
+                parsed_response = {}
+
+        print(f"Parsed Medication Information: {parsed_response}")
+        
+        return parsed_response
