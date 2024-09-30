@@ -22,6 +22,8 @@ const MainTabNavigator = () => {
             iconName = focused ? 'medkit' : 'medkit-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
+          } else if (route.name === 'Med Log') {
+            iconName = focused ? 'bandage' : 'bandage-outline'
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;

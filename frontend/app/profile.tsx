@@ -120,24 +120,6 @@ const ProfileScreen = () => {
           </View>
         </View>
       </ScrollView>
-
-      {/* Fixed Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        {/* Home Icon */}
-        <TouchableOpacity onPress={() => { router.push('/'); setSelected('home'); }} style={styles.navIcon}>
-          <Ionicons name="home" size={30} color={selected === 'home' ? '#1241C4' : '#D0D0D0'} />
-        </TouchableOpacity>
-
-        {/* Notifications Icon */}
-        <TouchableOpacity onPress={() => setSelected('notifications')} style={styles.navIcon}>
-          <Ionicons name="notifications" size={30} color={selected === 'notifications' ? '#1241C4' : '#D0D0D0'} />
-        </TouchableOpacity>
-
-        {/* Profile Icon */}
-        <TouchableOpacity onPress={() => { router.push('/profile'); setSelected('profile'); }} style={styles.navIcon}>
-          <Ionicons name="person" size={30} color={selected === 'profile' ? '#1241C4' : '#D0D0D0'} />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -146,7 +128,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    marginTop: 50,
   },
   scrollContent: {
     paddingHorizontal: 20,

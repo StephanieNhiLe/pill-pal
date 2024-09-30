@@ -37,20 +37,10 @@ const ChatScreen = () => {
   // Function to handle sending a message
   const handleSendMessage = async () => {
     if (message.trim() || image) {
-      setHasUserSentMessage(true); // Mark that the user has sent their first message
+      setHasUserSentMessage(true);
 
       // Create a new user message object
       const newMessage = { text: message, image: image, sender: 'user' };
-  
-      // Update the messages array with the new user message
-//       setMessages([...messages, newMessage]);
-
-//       // Clear the input message and image
-//       setMessage(''); // Reset the text input to empty
-//       setImage(null);
-
-//       // Simulate an AI response with the user's message
-//       simulateAiResponse(newMessage);
       
       setMessages(prevMessages => [...prevMessages, newMessage]);
   
@@ -76,7 +66,6 @@ const ChatScreen = () => {
           body: formData,
           headers: {
             Accept: 'application/json',
-            // Remove 'Content-Type': 'multipart/form-data',
             'Content-Type': 'multipart/form-data',
           },
         });
@@ -88,7 +77,6 @@ const ChatScreen = () => {
         const data = await response.json();
         const aiMessage = { text: data.response, sender: 'AI' };
         
-        // Update messages state, keeping previous messages including the user's message
         setMessages(prevMessages => [...prevMessages, aiMessage]);
         
         setIsLoading(false);
@@ -122,8 +110,6 @@ const ChatScreen = () => {
   const pickImageFromCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      // allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -136,8 +122,6 @@ const ChatScreen = () => {
   const pickImageFromGallery = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      // allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -157,9 +141,9 @@ const ChatScreen = () => {
         },
         (buttonIndex) => {
           if (buttonIndex === 1) {
-            pickImageFromCamera(); // Take Photo option
+            pickImageFromCamera();
           } else if (buttonIndex === 2) {
-            pickImageFromGallery(); // Choose from Gallery option
+            pickImageFromGallery();
           }
         }
       );
@@ -276,7 +260,7 @@ const ChatScreen = () => {
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
-  );
+  )
   
 };
 
@@ -284,6 +268,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
+    marginBottom: 3,
   },
   topNavigation: {
     flexDirection: 'row',

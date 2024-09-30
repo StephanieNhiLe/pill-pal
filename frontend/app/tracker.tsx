@@ -1,48 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-// import { Calendar, DateObject } from 'react-native-multi-date-picker';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
-// import axios from 'axios';
+import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
+import { useMedication } from '@/components/MedicationContext';
 
 const Tracker = () => {
   const navigation = useNavigation();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [reminder, setReminder] = useState('5 hours till your evening med intake!');
-  const [medications, setMedications] = useState([]);
-  const [medInfo, setMedInfo] = useState({});
-
-  useEffect(() => { 
-    const fetchMedInfo = async () => {
-      try {
-        const response = await fetch('http://192.168.50.143:8000/get_medication_list', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ chunks: [] }),
-        });
-        const data = await response.json();
-        setMedInfo(data);
-      } catch (error) {
-        console.error('Error fetching medication information:', error);
-      }
-    };
-
-    fetchMedInfo();
-  }, []);
+  const { medications } = useMedication(); // Use the medications from context
 
   const handleDateChange = (day: { dateString: string }) => {
     setSelectedDate(day.dateString);
   };
 
-  const handleTakeMed = (id: number) => {
-    setMedications(medications.map(med => med.id === id ? { ...med, taken: true } : med));
+  const handleTakeMed = (name: string) => {
+    // Logic to mark medication as taken
+    alert(`Marked ${name} as taken`);
   };
 
-  const handleSetReminder = (id: number) => {
+  const handleSetReminder = (name: string) => {
     // Logic to set reminder
-    alert(`Reminder set for medication ID: ${id}`);
+    alert(`Reminder set for ${name}`);
   };
 
   return (
@@ -59,8 +38,9 @@ const Tracker = () => {
         <Text style={styles.subsubHeader}>Reminder</Text>
         <Text>{reminder}</Text>
       </View>
-      <Text style={styles.subsubHeader}>Medication Intake Log</Text>
-      {Object.keys(medInfo).length === 0 ? (
+      <Text style={styles.subsubHeader}>Today's Medication</Text>
+      <Text style={styles.subsubHeader}>New Medications from Prescription</Text>
+      {medications.length === 0 ? (
         <View style={styles.noMedLogContainer}>
           <Text style={styles.noMedLogText}>No medication logs yet.</Text>
           <Text style={{padding: 8}}>You can either chat with PillPal AI to help you add your med through a photo of prescription and any pills info or you can add it by yourself.</Text>
@@ -78,15 +58,26 @@ const Tracker = () => {
           </TouchableOpacity>
         </View>
       ) : (
-        <ScrollView horizontal style={styles.medicationList}>
-          <Text style={styles.medicationHeader}>Medication Intake Log</Text>
-          {Object.entries(medInfo).map(([name, info], index) => (
+        <ScrollView style={styles.medicationList}>
+          {medications.map((med, index) => (
             <View key={index} style={styles.medicationItem}>
-              <Text>{name}</Text>
-              <Text>Dosage: {info.dosage}</Text>
-              <Text>Time: {info.time}</Text>
-              <Button title="Confirm" onPress={() => handleTakeMed(index)} />
-              <Button title="Set Reminder" onPress={() => handleSetReminder(index)} />
+              <Text style={styles.medName}>{med.name}</Text>
+              <Text>Dosage: {med.dosage}</Text>
+              <Text>Time: {med.time}</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => handleTakeMed(med.name)}
+                >
+                  <Text style={styles.buttonText}>Confirm</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => handleSetReminder(med.name)}
+                >
+                  <Text style={styles.buttonText}>Set Reminder</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -96,56 +87,75 @@ const Tracker = () => {
 };
 
 const styles = StyleSheet.create({
-    tracker: {
-      padding: 20,
-    },
-    header: {
-      fontSize: 24,
-      fontWeight: 'bold',
-    },
-    subHeader: {
-      fontSize: 18,
-      marginBottom: 10,
-    },
-    reminder: {
-      marginVertical: 20,
-    },
-    subsubHeader: {
-      fontSize: 20,
-      fontWeight: 'bold',
-    },
-    medicationList: {
-      marginVertical: 20,
-    },
-    medicationHeader: {
-      fontSize: 20,
-      fontWeight: 'bold',
-    },
-    medicationItem: {
-      marginVertical: 10,
-      padding: 10,
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 5,
-    },
-    noMedLogContainer: {
-        alignItems: 'center',
-        marginVertical: 20,
-      },
-      noMedLogText: {
-        fontSize: 18,
-        marginBottom: 10,
-      },
-      functionButton: {
-        backgroundColor: '#1241C4',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-      },
-      functionText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-      },
-  });
-  
-  export default Tracker;
+  tracker: {
+    padding: 20,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  subHeader: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  reminder: {
+    marginVertical: 20,
+  },
+  subsubHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  medicationList: {
+    marginVertical: 20,
+  },
+  medicationItem: {
+    marginBottom: 20,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    backgroundColor: '#f9f9f9',
+  },
+  medName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: '#1241C4',
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  noMedLogContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  noMedLogText: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  functionButton: {
+    backgroundColor: '#1241C4',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  functionText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+});
+
+export default Tracker;
