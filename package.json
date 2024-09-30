@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "expo-image-picker": "^15.0.7",
     "react-native-vector-icons": "^10.2.0"
   }
 }
