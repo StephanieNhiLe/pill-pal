@@ -35,15 +35,15 @@ const WelcomeScreen = () => {
       </TouchableOpacity>
 
       {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
+      {/* <View style={styles.bottomNav}> */}
         {/* Home Icon */}
-        <TouchableOpacity onPress={() => router.push('/') } style={styles.navIcon}>
+        {/* <TouchableOpacity onPress={() => router.push('/') } style={styles.navIcon}>
           <Ionicons
             name="home"
             size={30}
             color={selected === 'home' ? '#1241C4' : '#D0D0D0'}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Explore Icon */}
         {/* <TouchableOpacity onPress={() => setSelected('search')} style={styles.navIcon}>
@@ -55,23 +55,23 @@ const WelcomeScreen = () => {
         </TouchableOpacity> */}
 
         {/* Notifications Icon */}
-        <TouchableOpacity onPress={() => setSelected('notifications')} style={styles.navIcon}>
+        {/* <TouchableOpacity onPress={() => setSelected('notifications')} style={styles.navIcon}>
           <Ionicons
             name="notifications"
             size={30}
             color={selected === 'notifications' ? '#1241C4' : '#D0D0D0'}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Profile Icon */}
-        <TouchableOpacity onPress={() => router.push('/profile')} style={styles.navIcon}>
+        {/* <TouchableOpacity onPress={() => router.push('/profile')} style={styles.navIcon}>
           <Ionicons
             name="person"
             size={30}
             color={selected === 'profile' ? '#1241C4' : '#D0D0D0'}
           />
-        </TouchableOpacity>
-      </View>
+        </TouchableOpacity> */}
+      {/* </View> */}
     </View>
   );
 };
