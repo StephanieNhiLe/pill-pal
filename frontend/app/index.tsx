@@ -22,11 +22,11 @@ const WelcomeScreen = () => {
 
       {/* Title */}
       <Text style={styles.title}>Welcome to</Text>
-      <Text style={styles.appName}>PillPal</Text>
+      <Text style={styles.appName}>PillPal.ai</Text>
 
       {/* Description */}
       <Text style={styles.description}>
-        Start chatting with PillPal now.{"\n"}Ask me anything about your medication.
+        Start chatting with PillPal.ai now.{"\n"}Ask me anything about your medication.
       </Text>
 
       {/* Get Started Button */}
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 180,
+    paddingTop: 200,
   },
   logoContainer: {
     marginTop: 20,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-around',
-    paddingVertical: 10,
+    paddingVertical: 5,
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',

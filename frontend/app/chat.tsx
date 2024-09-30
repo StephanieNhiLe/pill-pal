@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image, FlatList, 
+  ActivityIndicator, ActionSheetIOS, Alert} from 'react-native';
 import { Ionicons } from 'react-native-vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
@@ -11,6 +12,7 @@ const ChatScreen = () => {
   const [messages, setMessages] = useState([]); // State for message history
   const [image, setImage] = useState(null); // State for the selected image
   const [isLoading, setIsLoading] = useState(false); // State to simulate AI response
+  const [hasUserSentMessage, setHasUserSentMessage] = useState(false); // Track if the user has sent their first message
 
   useEffect(() => {
     // Request permissions for accessing the camera and media library
@@ -28,10 +30,21 @@ const ChatScreen = () => {
   // Function to handle sending a message
   const handleSendMessage = async () => {
     if (message.trim() || image) {
+      setHasUserSentMessage(true); // Mark that the user has sent their first message
+
       // Create a new user message object
       const newMessage = { text: message, image: image, sender: 'user' };
   
       // Update the messages array with the new user message
+//       setMessages([...messages, newMessage]);
+
+//       // Clear the input message and image
+//       setMessage(''); // Reset the text input to empty
+//       setImage(null);
+
+//       // Simulate an AI response with the user's message
+//       simulateAiResponse(newMessage);
+      
       setMessages(prevMessages => [...prevMessages, newMessage]);
   
       let formData = new FormData();
@@ -126,6 +139,47 @@ const ChatScreen = () => {
     }
   };
 
+  // Function to handle showing options for adding a prescription
+  const handleAddPrescription = () => {
+    if (Platform.OS === 'ios') {
+      // iOS Action Sheet
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Cancel', 'Take Photo', 'Choose from Gallery'],
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 1) {
+            pickImageFromCamera(); // Take Photo option
+          } else if (buttonIndex === 2) {
+            pickImageFromGallery(); // Choose from Gallery option
+          }
+        }
+      );
+    } else {
+      // Android / Web Alert Dialog as a simple implementation
+      Alert.alert(
+        'Add Prescription',
+        'Choose an option',
+        [
+          {
+            text: 'Take Photo',
+            onPress: pickImageFromCamera,
+          },
+          {
+            text: 'Choose from Gallery',
+            onPress: pickImageFromGallery,
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -137,12 +191,30 @@ const ChatScreen = () => {
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.title}>PillPal</Text>
-        <TouchableOpacity style={styles.menuButton}>
-          <Ionicons name="ellipsis-horizontal" size={24} color="#333" />
+
+        <Text style={styles.title}>PillPal.ai</Text>
+
+        {/* "Add Prescription" Button */}
+        <TouchableOpacity style={styles.addPrescriptionButton} onPress={handleAddPrescription}>
+          <Text style={styles.addPrescriptionText}>Add Prescription</Text>
         </TouchableOpacity>
+
+        {/* <TouchableOpacity style={styles.menuButton}>
+          <Ionicons name="ellipsis-horizontal" size={24} color="#333" />
+        </TouchableOpacity> */}
       </View>
 
+      {/* Display Description Boxes Before First Message */}
+      {!hasUserSentMessage ? (
+        <ScrollView contentContainerStyle={styles.introContainer}>
+          <Image source={require('../assets/images/PillPal2.png')} style={styles.logo}></Image>
+          <Text style={styles.introText}>PillPal.ai helps you put a name to an unknown medication.</Text>
+          <Text style={styles.introText}>It identifies prescription or OTC meds you take in solid form by mouth, like tablets or capsules.</Text>
+          <Text style={styles.introText}>Simply take a photo of the pill, and PillPal.ai tells you what it might be.</Text>
+          <Text style={styles.introText}>It shows you a list of close matches, or it singles out an exact possible match.</Text>
+          <Text style={styles.introText}>Each result includes a pill’s picture, its brand and generic names, strength, and other info.</Text>
+        </ScrollView>
+      ) : (
       {/* Scrollable Content */}
       <ScrollView style={styles.content}>
 
@@ -165,13 +237,14 @@ const ChatScreen = () => {
           </View>
         ))}
 
-        {isLoading && (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color="#1241C4" />
-            <Text style={styles.loadingText}>AI is generating a response...</Text>
-          </View>
-        )}
-      </ScrollView>
+          {isLoading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color="#1241C4" />
+              <Text style={styles.loadingText}>AI is generating a response...</Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
 
       {/* Floating Input Section */}
       <View style={styles.inputContainer}>
@@ -212,9 +285,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain',
   },
   backButton: {
     padding: 8,
@@ -226,6 +304,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#333',
+  },
+  introContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 2,
+    paddingBottom: 60
+  },
+  introText: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 12,
+    padding: 10,
+    marginVertical: 10,
+    fontSize: 16,
+    color: '#7C7C7C',
+    textAlign: 'center',
+    width: '90%',
   },
   content: {
     flex: 1,
@@ -275,7 +371,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     position: 'absolute',
-    bottom: 30, // Make the input bar float above the bottom
+    bottom: 20, // Make the input bar float above the bottom
     left: 10,
     right: 10,
     flexDirection: 'row',
@@ -311,6 +407,17 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  addPrescriptionButton: {
+    backgroundColor: '#1241C4',
+    paddingHorizontal: 5,
+    paddingVertical: 8,
+    borderRadius: 7,
+  },
+  addPrescriptionText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 
