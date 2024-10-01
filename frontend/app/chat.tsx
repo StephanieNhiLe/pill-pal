@@ -183,7 +183,7 @@ const ChatScreen = () => {
           <Ionicons name="chevron-back" size={24} color="#333" />
         </TouchableOpacity>
   
-        <Text style={styles.title}>PillPal.ai</Text>
+        <Text style={styles.title}>PillPal AI</Text>
   
         {/* "Add Prescription" Button */}
         <TouchableOpacity style={styles.addPrescriptionButton} onPress={handleAddPrescription}>
@@ -204,20 +204,15 @@ const ChatScreen = () => {
       ) : (
         <ScrollView style={styles.content}>
           {messages.map((item, index) => (
-            <View
-              key={index}
-              style={[
-                styles.messageContainer,
-                item.sender === 'user' ? styles.userMessage : styles.aiMessage,
-              ]}
-            >
-              {/* Render Markdown text if available */}
-              {item.text ? (
-                <Text style={styles.messageText}>
+            <View key={index} style={[styles.messageContainer, item.sender === 'user' ? styles.userMessage : styles.aiMessage]}>
+              {/* Render Markdown text for AI messages */}
+              {item.sender === 'AI' && item.text ? (
+                <Markdown style={markdownStyles}>
                   {item.text}
-                </Text>
-              ) : null}
-  
+                </Markdown>
+              ) : (
+                <Text style={styles.messageText}>{item.text}</Text>
+              )}
               {/* Render Image if available */}
               {item.image ? (
                 <Image source={{ uri: item.image }} style={styles.messageImage} />
@@ -268,7 +263,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
-    marginBottom: 3,
+    marginBottom: 10,
   },
   topNavigation: {
     flexDirection: 'row',

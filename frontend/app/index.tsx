@@ -22,7 +22,7 @@ const WelcomeScreen = () => {
 
       {/* Title */}
       <Text style={styles.title}>Welcome to</Text>
-      <Text style={styles.appName}>PillPal.ai</Text>
+      <Text style={styles.appName}>PillPal AI</Text>
 
       {/* Description */}
       <Text style={styles.description}>
