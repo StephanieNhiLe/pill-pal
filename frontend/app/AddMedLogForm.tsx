@@ -26,6 +26,16 @@ const AddMedLogForm = () => {
 
   const handleAddMedLog = () => {
     if (medName && dosage && time) {
+      // Create a new medication object
+      const newMedication = {
+        name: medName,
+        dosage: dosage,
+        time: time
+      };
+
+      // Add the new medication to the context
+      setMedications(prevMedications => [...prevMedications, newMedication]);
+
       Alert.alert('Medication Log Added', `Name: ${medName}, Dosage: ${dosage}, Time: ${time}`);
       navigation.goBack();
     } else {

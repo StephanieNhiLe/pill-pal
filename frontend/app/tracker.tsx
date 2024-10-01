@@ -1,49 +1,162 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useMedication } from '@/components/MedicationContext';
 
 const Tracker = () => {
   const navigation = useNavigation();
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [reminder, setReminder] = useState('5 hours till your evening med intake!');
-  const { medications } = useMedication(); // Use the medications from context
+  const { medications } = useMedication();
+  const [remindedMeds, setRemindedMeds] = useState({});
+  const [takenMeds, setTakenMeds] = useState({});
+  const [availableMeds, setAvailableMeds] = useState(medications);
 
-  const handleDateChange = (day: { dateString: string }) => {
+  useEffect(() => {
+    // Initialize remindedMeds and takenMeds for the current date
+    const today = new Date().toISOString().split('T')[0];
+    if (!remindedMeds[today]) {
+      setRemindedMeds(prev => ({ ...prev, [today]: {} }));
+    }
+    if (!takenMeds[today]) {
+      setTakenMeds(prev => ({ ...prev, [today]: {} }));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Update available medications whenever remindedMeds changes
+    const updatedMeds = remove_medications(medications, remindedMeds, selectedDate);
+    setAvailableMeds(updatedMeds);
+  }, [remindedMeds, medications, selectedDate]);
+
+  const getWeekDates = (startDate) => {
+    const weekDates = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i);
+      return date.toISOString().split('T')[0];
+    });
+    return weekDates;
+  };
+
+  const remove_medications = (medications, reminded_meds, currentDate) => {
+    const weekDates = getWeekDates(currentDate);
+    const reminded_med_names = new Set();
+
+    weekDates.forEach(date => {
+      if (reminded_meds[date]) {
+        Object.keys(reminded_meds[date]).forEach(name => reminded_med_names.add(name));
+      }
+    });
+
+    return medications.filter(med => !reminded_med_names.has(med.name));
+  };
+
+  const handleDateChange = (day) => {
     setSelectedDate(day.dateString);
   };
 
-  const handleTakeMed = (name: string) => {
-    // Logic to mark medication as taken
-    alert(`Marked ${name} as taken`);
+  const addMedToWeek = (med) => {
+    const weekDates = getWeekDates(selectedDate);
+
+    setRemindedMeds(prev => {
+      const newRemindedMeds = { ...prev };
+      weekDates.forEach(date => {
+        if (!newRemindedMeds[date]) {
+          newRemindedMeds[date] = {};
+        }
+        newRemindedMeds[date][med.name] = med;
+      });
+      return newRemindedMeds;
+    });
   };
 
-  const handleSetReminder = (name: string) => {
-    // Logic to set reminder
-    alert(`Reminder set for ${name}`);
+  const handleSetReminder = (med) => {
+    addMedToWeek(med);
+  };
+
+  const handleTakeMed = (medName) => {
+    setTakenMeds(prev => ({
+      ...prev,
+      [selectedDate]: {
+        ...prev[selectedDate],
+        [medName]: true
+      }
+    }));
+  };
+
+  const renderMedicationList = (meds, isRemindedList = false) => {
+    return Object.values(meds).map((med, index) => {
+      const isTaken = takenMeds[selectedDate]?.[med.name];
+      return (
+        <View key={index} style={[styles.medicationItem, isTaken && styles.takenMedication]}>
+          <Text style={styles.medName}>{med.name}</Text>
+          <Text>Dosage: {med.dosage}</Text>
+          <Text>Time: {med.time}</Text>
+          <View style={styles.buttonContainer}>
+            {isRemindedList ? (
+              <TouchableOpacity
+                style={[styles.button, isTaken && styles.disabledButton]}
+                onPress={() => handleTakeMed(med.name)}
+                disabled={isTaken}
+              >
+                <Text style={styles.buttonText}>{isTaken ? 'Taken' : 'Confirm'}</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleSetReminder(med)}
+              >
+                <Text style={styles.buttonText}>Set Reminder</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      );
+    });
+  };
+
+  const getMarkedDates = () => {
+    const markedDates = {};
+    Object.keys(remindedMeds).forEach(date => {
+      if (Object.keys(remindedMeds[date]).length > 0) {
+        markedDates[date] = { marked: true, dotColor: 'blue' };
+      }
+    });
+    if (selectedDate) {
+      markedDates[selectedDate] = { 
+        ...(markedDates[selectedDate] || {}),
+        selected: true,
+        selectedColor: 'blue'
+      };
+    }
+    return markedDates;
   };
 
   return (
     <ScrollView style={styles.tracker}>
       <Text style={styles.header}>Your Medication Tracker</Text>
-      <Text style={styles.subHeader}>Sept 2024</Text>
       <Calendar
         onDayPress={handleDateChange}
-        markedDates={{
-          [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
-        }}
+        markedDates={getMarkedDates()}
       />
       <View style={styles.reminder}>
         <Text style={styles.subsubHeader}>Reminder</Text>
         <Text>{reminder}</Text>
       </View>
-      <Text style={styles.subsubHeader}>Today's Medication</Text>
+      <Text style={styles.subsubHeader}>Medications for {selectedDate}</Text>
+      {Object.keys(remindedMeds[selectedDate] || {}).length === 0 ? (
+        <Text>No medications scheduled for this date.</Text>
+      ) : (
+        <ScrollView style={styles.medicationList}>
+          {renderMedicationList(remindedMeds[selectedDate], true)}
+        </ScrollView>
+      )}
       <Text style={styles.subsubHeader}>New Medications from Prescription</Text>
-      {medications.length === 0 ? (
+      {availableMeds.length === 0 ? (
         <View style={styles.noMedLogContainer}>
-          <Text style={styles.noMedLogText}>No medication logs yet.</Text>
-          <Text style={{padding: 8}}>You can either chat with PillPal AI to help you add your med through a photo of prescription and any pills info or you can add it by yourself.</Text>
+          <Text style={styles.noMedLogText}>No new medications available.</Text>
+          <Text style={{padding: 8}}>You can chat with PillPal AI to add more medications or add them manually.</Text>
           <TouchableOpacity
             style={styles.functionButton}
             onPress={() => navigation.navigate('ChatScreen')}
@@ -59,27 +172,7 @@ const Tracker = () => {
         </View>
       ) : (
         <ScrollView style={styles.medicationList}>
-          {medications.map((med, index) => (
-            <View key={index} style={styles.medicationItem}>
-              <Text style={styles.medName}>{med.name}</Text>
-              <Text>Dosage: {med.dosage}</Text>
-              <Text>Time: {med.time}</Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => handleTakeMed(med.name)}
-                >
-                  <Text style={styles.buttonText}>Confirm</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => handleSetReminder(med.name)}
-                >
-                  <Text style={styles.buttonText}>Set Reminder</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
+          {renderMedicationList(availableMeds)}
         </ScrollView>
       )}
     </ScrollView>
@@ -155,6 +248,12 @@ const styles = StyleSheet.create({
   functionText: {
     color: '#FFFFFF',
     fontSize: 16,
+  },
+  takenMedication: {
+    opacity: 0.5,
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc',
   },
 });
 
