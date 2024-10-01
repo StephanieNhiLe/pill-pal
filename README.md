@@ -34,7 +34,7 @@ To ensure efficient data retrieval and a seamless user experience, we integrated
 
 We also placed a strong emphasis on **user experience (UX)** design to ensure that our app is accessible to users, especially those with limited technological proficiency. By focusing on simplicity and ease of use, we aimed to make PillPal a valuable tool for anyone managing their health.
 
-##Challenges we ran into
+## Challenges we ran into
 During the development of PillPal, we faced several challenges:
 - **Indexing System Setup**: Properly configuring the indexing system for efficient data retrieval proved to be a complex task, requiring extensive testing and optimization to ensure fast and accurate responses.
 - **Integration for Real-Time Responses**: Ensuring smooth integration of various components for real-time user interactions was challenging. We had to address latency issues and maintain a seamless user experience.
@@ -46,7 +46,7 @@ Throughout the development process, we achieved several milestones that we are p
 - **Robust Medication Log Feature**: Establishing a comprehensive medication log feature allows users to keep detailed records of their prescriptions and intake schedules, improving adherence.
 - **Positive User Feedback**: Initial user testing yielded overwhelmingly positive feedback, indicating a strong interest and critical need for such a tool within our target communities.
 
-##What we learned
+## What we learned
 Our journey in developing PillPal has taught us valuable lessons:
 - **User-Centric Design**: Prioritizing user-centric design is crucial when developing features that cater specifically to the needs of elderly individuals and communities of color.
 - **Technology Integration Challenges**: The complexity of integrating various AI technologies highlighted the necessity of thorough testing and iteration to ensure optimal functionality and user satisfaction.
