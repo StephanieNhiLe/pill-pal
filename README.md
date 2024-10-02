@@ -1,5 +1,5 @@
 # PillPal AI  
-![image](https://github.com/user-attachments/assets/3dc09cfa-e570-43cf-aa74-354d75ddf7ac)
+![Screenshot 2024-10-01 at 9 44 48 PM](https://github.com/user-attachments/assets/2ec7adb2-5c43-4f19-98cd-8db76277c1c9)
 
 ## Inspiration
 Health disparities among racial and ethnic minorities significantly impact medication adherence and overall health outcomes. [A 2024 report by the Kaiser Family Foundation](https://www.kff.org/racial-equity-and-health-policy/issue-brief/how-present-day-health-disparities-for-black-people-are-linked-to-past-policies-and-events/) found that Black and Hispanic adults are less likely to report taking their medications as prescribed compared to white adults. This lack of adherence can be attributed to several contributing factors, including language barriers, complex medication regimens, limited access to healthcare resources such as geographic, financial, and systemic barriers can restrict access to necessary healthcare services and information.
