@@ -55,6 +55,7 @@ Our journey in developing PillPal has taught us valuable lessons:
 
 ## What's next for PillPal
 Looking ahead, we have several strategic goals for PillPal:
+- **Launching to the Public:** We plan to go ahead and make the app scalable and live on the App Store and Play Store for users around the world to track their health. 
 - **Feature Expansion**: We plan to explore additional features, including multilingual support and access to community resources, to further assist our users in navigating their healthcare.
 - **Partnership Development**: Seeking partnerships with healthcare providers and community organizations is essential for promoting PillPal and ensuring it reaches those who need it most.
 - **User Education**: Developing educational resources within the app will empower users with knowledge about their medications and overall health management, fostering a sense of independence and confidence in their healthcare decisions.
