@@ -41,6 +41,7 @@ class PrescriptionUploader:
         self.vector_store.delete(delete_all=True)
         return True
     
+    # Delete with Source
     def delete_prescription(self, file_path):
         loader = TextLoader(file_path)
         documents = loader.load()
@@ -48,4 +49,3 @@ class PrescriptionUploader:
         chunks = text_splitter.split_documents(documents)
         self.vector_store.delete(chunks)
         return len(chunks)
-

@@ -1,9 +1,9 @@
 from typing import Optional
 from fastapi import FastAPI, File, UploadFile, Form
 from pydantic import BaseModel
-from services.PineconeVectorDB import PineconeVectorDB
-from services.PrescriptionProcessing import PrescriptionUploader
-from services.PineconeQA import PineconeQA
+from services.PineConeServices.PineconeVectorDB import PineconeVectorDB
+from services.PineConeServices.PrescriptionProcessing import PrescriptionUploader
+from services.PineConeServices.PineconeQA import PineconeQA
 import os 
 
 from dotenv import load_dotenv
